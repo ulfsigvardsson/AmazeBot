@@ -1,0 +1,2 @@
+# mazegame
+Maze solving bot
