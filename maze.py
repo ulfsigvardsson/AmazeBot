@@ -39,29 +39,20 @@ def findpath(tile, x, y):
                 findpath(neighbour, neighbour.get_x(), neighbour.get_y())
 
 def generate_map(tile, x, y):
-    """Moves the 'player' through the maze
+    """Generates a random map """
 
-       tile:: Tile-object representing the current position
-       x:: integer, x-coordinates of 'tile'
-       y:: integer, y-coordinates of 'tile'    """
+    # TODO: Change this copy of find_path to an actual mapgenerator
+    
+    time.sleep(0.03)    # Time delay to enable visual tracking
+    tile.setFill("white")
+    tile.set_type("Floor")
+    neighbours = neighbour_list(row_list, x, y)     # Finds all neighbouring tiles and returns them in a list
 
-    if tile.type == "Exit":
-        tile.setFill("green")
-        print "Success!"
-        w1.getMouse()   # Keeps the window from closing
-        quit()
+    neighbours.sort(key=lambda x: x.distance)   # Sorts the list of neighbours by distance to goal
 
-    else:
-        time.sleep(0.03)    # Time delay to enable visual tracking
-        tile.setFill("white")
-        tile.set_type("Floor")
-        neighbours = neighbour_list(row_list, x, y)     # Finds all neighbouring tiles and returns them in a list
-
-        neighbours.sort(key=lambda x: x.distance)   # Sorts the list of neighbours by distance to goal
-
-        for neighbour in neighbours:    # Runs the findpath() function on all neighbours that is not a wall or have already been visited
-            if neighbour.status != "Visited" and neighbour.type != "Wall":
-                findpath(neighbour, neighbour.get_x(), neighbour.get_y())
+    for neighbour in neighbours:    # Runs the findpath() function on all neighbours that is not a wall or have already been visited
+        if neighbour.status != "Visited" and neighbour.type != "Wall":
+            findpath(neighbour, neighbour.get_x(), neighbour.get_y())
 
 
 def make_goal(tile):
