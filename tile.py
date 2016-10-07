@@ -5,6 +5,7 @@ class Tile(Rectangle):
     """Derives from Rectangle but adds among others a type-attribute to distinguish between walls, floors and goal"""
     status = "undiscovered" # Initial status for all tiles
     distance = 0    # Initial distance for all tiles
+    parent=None
 
     def __init__(self, p1, p2, type, x, y):     # Constructor
         Rectangle.__init__(self, p1, p2)
@@ -15,6 +16,12 @@ class Tile(Rectangle):
     def get_type(self):
         """Returns the type-attribute of a Tile-object"""
         return self.type
+
+    def get_parent(self):
+        return self.parent
+
+    def set_parent(self, parent):
+        self.parent=parent
 
     def get_status(self):
         """Returns the status-attribute of a Tile-object"""
