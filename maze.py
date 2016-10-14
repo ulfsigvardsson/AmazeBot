@@ -1,5 +1,6 @@
 from tile import *
 import pygame
+from random import *
 pygame.init()
 
 
@@ -15,13 +16,16 @@ def neighbour_list(x, y):
         x:: integer, x-coordinate of a Tile-object
         y:: integer, y-coorfinate of a Tile-object"""
 
-    neighbours = [
-                    row_list[x][y + 1],
-                    row_list[x][y - 1],
-                    row_list[x + 1][y],
-                    row_list[x - 1][y]
-    ]
+    neighbours=[]
 
+    if x>0:
+        neighbours.append(row_list[x - 1][y])
+    if x<COLUMNS-1:
+        neighbours.append(row_list[x + 1][y])
+    if y>0:
+        neighbours.append(row_list[x][y-1])
+    if y<ROWS-1:
+        neighbours.append(row_list[x][y+1])
     return neighbours
 
 
@@ -38,7 +42,7 @@ def paint_path(tile):
 
         for tile in path:          # Then follow the path to the goal
 
-            time.sleep(0.01)
+            time.sleep(0.03)
 
             if tile.type == "Exit":
                 tile.setFill("green")
@@ -163,6 +167,7 @@ def make_maze():
             row_list[i][j].set_distance(goal)
 
 
+
 def callback(event):
 
     """Event handler for click events, sets focus to the display screen"""
@@ -174,15 +179,16 @@ def key(event):
 
     """Event handler for pressed keys"""
 
-    current=get_current()                       # Get the current player tile
-    x=current.get_x()                           # Get the x-coordinate
-    y=current.get_y()                           # Get the y-coordinate
+    current = get_current()                       # Get the current player tile
+    x = current.get_x()                           # Get the x-coordinate
+    y = current.get_y()                           # Get the y-coordinate
 
     if x>0 and x<COLUMNS and y>0 and y<ROWS:    # Check if it's possible to make a move within the boundaries of the map
         up = row_list[x][y-1]
         down = row_list[x][y+1]
         left = row_list[x-1][y]
         right = row_list[x+1][y]
+
 
         if event.keysym == "s":                   # If 's' is pressed, the bot solves the maze
             solve(current, x, y)
@@ -219,6 +225,30 @@ def key(event):
                 current.setFill("white")
                 current.type = "Floor"
 
+def invalid_tile(tile):
+    x=tile.get_x()
+    y=tile.get_y()
+
+    neighbours = []
+
+    if x>0 and y>0:
+        neighbours.append(row_list[x-1][y-1])
+        neighbours.append(row_list[x-1][y])
+        neighbours.append(row_list[x][y-1])
+    if x<COLUMNS-1 and y<ROWS-1:
+        neighbours.append(row_list[x + 1][y + 1])
+        neighbours.append(row_list[x + 1][y])
+        neighbours.append(row_list[x][y + 1])
+
+    neighbouring_floors=0
+    for n in neighbours:
+        if n.type=="Floor":
+            neighbouring_floors=neighbouring_floors+1
+
+    if neighbouring_floors>=2:
+        return True
+    else:
+        return False
 
 def get_current():
 
@@ -229,8 +259,66 @@ def get_current():
             if tile.type == "Player":
                 return tile
 
+def generate_maze():
+    remaining_tiles=0
 
+    for i in range(len(map)):  # Outer loop for generating every row
+        column_list = []  # List set to empty for a iteration of a new row
 
+        for j in range(len(map[i])):  # Inner loop to iterate every column on each row
+
+            # Tile object are created as floors by default
+            r = Tile(
+                Point(i * TILESIZE, j * TILESIZE),  # Upper corner of Tile
+                Point((i + 1) * TILESIZE, (j + 1) * TILESIZE),  # Lower corner of Tile
+                "Wall",  # Tile type
+                i,  # x-coordinate in the grid
+                j  # y-coordinate in the grid
+            )
+            r.setFill("black")
+            column_list.append(r)  # Append each rectangle to its list of columns
+            r.draw(w1)
+            remaining_tiles+=remaining_tiles+1
+        row_list.append(column_list)
+
+    x=randint(9,11)
+    y=randint(9,11)
+    current=row_list[x][y]
+
+    generate_maze2(current, remaining_tiles)
+
+def generate_maze2(current, remaining_tiles):
+    stack = []
+    stack.append(current)
+    current.visited=True
+    current.blocked=True
+
+    while stack:
+        time.sleep(0.2)
+        current=stack.pop()
+        current.setFill("white")
+        current.type="Floor"
+
+        nlist=neighbour_list(current.get_x(), current.get_y())
+
+        for n in nlist:
+            if invalid_tile(n):
+                nlist.remove(n)
+
+            if n.blocked==True:
+                if n in nlist:
+                    nlist.remove(n)
+
+            elif n.discovered==True:
+                n.blocked=True
+                if n in nlist:
+                    nlist.remove(n)
+            else:
+                n.discovered=True
+
+            next_tile=choice(nlist)
+
+            stack.append(next_tile)
 # =============================================
 #                 BACKING FIELD
 # =============================================
@@ -304,9 +392,10 @@ path = []           # Stores the optimal path
 # =============================================
 
 make_maze()         # Display the initial map
+#generate_maze()
 
 while True:
 
     w1.bind("<Key>", key)               # Sends all key events to the event handler
     w1.bind("<Button-1>", callback)     # Sends all mouse events to the event handler, sets focus to the window
-    w1.getMouse()                       # Prevents the window from closing
+    w1.getMouse()                       # Prevents the window from closing, without this the program won't run properly

@@ -10,6 +10,8 @@ class Tile(Rectangle):
     parent = None
     cost = 0                    # When a tile is discovered, cost is set equal to distance traveled from the start tile
     total_cost = 0              # When a tile is discovered, total cost is set to self.cost*self.distance
+    discovered= False
+    blocked=False
 
     def __init__(self, p1, p2, type, x, y):     # Constructor
         Rectangle.__init__(self, p1, p2)
