@@ -1,79 +1,27 @@
 from graphics import *
 import math
 
+
 class Tile(Rectangle):
 
-    """Derives from Rectangle but adds among others a type-attribute to distinguish between walls, floors and goal"""
+    """Inherits from Rectangle but adds among others a type-attribute to distinguish between walls, floors and goal"""
 
-    status = "undiscovered"     # Initial status for all tiles
-    distance = 0                # Initial distance for all tiles
-    parent = None
-    cost = 0                    # When a tile is discovered, cost is set equal to distance traveled from the start tile
-    total_cost = 0              # When a tile is discovered, total cost is set to self.cost*self.distance
-    discovered= False
-    blocked=False
+    def __init__(self, p1, p2, type, x, y):
 
-    def __init__(self, p1, p2, type, x, y):     # Constructor
         Rectangle.__init__(self, p1, p2)
-        self.type = type
-        self.x = x
-        self.y = y
-
-    def get_type(self):
-
-        """Returns the type-attribute of a Tile-object"""
-
-        return self.type
-
-    def get_parent(self):
-
-        """Returns the parent-attribute of a Tile-object"""
-
-        return self.parent
-
-    def set_parent(self, parent):
-        self.parent=parent
-
-    def get_status(self):
-
-        """Returns the status-attribute of a Tile-object"""
-
-        return self.status
-
-    def set_type(self, type):
-
-        """Sets the type-attribute of a Tile-object"""
-
-        self.type=type
-
-    def set_status(self, status):
-
-        """Sets the status-attribute of a Tile-object"""
-
-        self.status=status
-
-    def get_x(self):
-
-        """Returns the x-coordinate of a Tile-object"""
-
-        return  self.x
-
-    def get_y(self):
-
-        """Returns the y-coordinate of a Tile-object"""
-
-        return self.y
-
-    def get_distance(self):
-
-        """Returns the distance between a Tile-object and the goal tile"""
-
-        return self.distance
+        self.type = type        # Wall, floor, exit or player
+        self.x = x              # X-coordinate in the two dimensional list
+        self.y = y              # Y-coordinate in the two dimensional list
+        self.distance = 0       # Distance to the goal, calculated after initialization
+        self.parent = None
+        self.travel_cost = 0    # Number of moves needed to reach the tile from the start
+        self.total_cost = 0     # Equal to travel_cost*distance
+        self.visited = False    # Boolean representing whether or not the tile has already been visited by the bot
 
     def set_distance(self, goal):
 
         """Sets the distance between a Tile-object and the goal tile"""
 
-        self.distance = math.sqrt((self.get_x() - goal.get_x()) ** 2 + (self.get_y() - goal.get_y()) ** 2)
+        self.distance = math.sqrt((self.x - goal.x) ** 2 + (self.y - goal.y) ** 2)
 
 

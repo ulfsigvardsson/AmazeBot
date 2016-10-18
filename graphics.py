@@ -301,7 +301,7 @@ class GraphWin(tk.Canvas):
             return None
 
     def getKey(self):
-        """Wait for user to press a key and return it as a string."""
+        """Wait for user to press a key_events and return it as a string."""
         self.lastKey = ""
         while self.lastKey == "":
             self.update()
@@ -313,7 +313,7 @@ class GraphWin(tk.Canvas):
         return key
 
     def checkKey(self):
-        """Return last key pressed or None if no key pressed since last call"""
+        """Return last key_events pressed or None if no key_events pressed since last call"""
         if self.isClosed():
             raise GraphicsError("checkKey in closed window")
         self.update()
@@ -470,7 +470,7 @@ class GraphicsObject:
 
     def move(self, dx, dy):
 
-        """move object dx units in x direction and dy units in y
+        """move_player object dx units in x direction and dy units in y
         direction"""
         
         self._move(dx,dy)
@@ -508,7 +508,7 @@ class GraphicsObject:
 
 
     def _move(self, dx, dy):
-        """updates internal state of object to move it dx,dy units"""
+        """updates internal state of object to move_player it dx,dy units"""
         pass # must override in subclass
 
          
